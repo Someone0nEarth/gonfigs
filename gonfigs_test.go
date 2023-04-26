@@ -36,17 +36,17 @@ func Test_Parse(t *testing.T) {
 	t.Setenv("TEST_ENV_VALUE_5", "env_value_5")
 
 	type ExampleConfig struct {
-		WithDefault                    *string `env_name:"NO_ENV_VALUE" default:"default_1"`
-		WithoutEnvAndDefault           *string `env_name:"NO_ENV_VALUE2"`
-		WithEnvAndDefault              *string `env_name:"TEST_ENV_VALUE_1" default:"default_2"`
-		WithEnv                        *string `env_name:"TEST_ENV_VALUE_2"`
-		WithValueSetAndEnvAndDefault   *string `env_name:"TEST_ENV_VALUE_3" default:"default_2"`
-		WithValueSetAndOnlyEnv         *string `env_name:"TEST_ENV_VALUE_4"`
-		WithValueSetAndOnlyDefault     *string `env_name:"NO_ENV_VALUE3" default:"default_3"`
-		WithValueSetOnly               *string `env_name:"NO_ENV_VALUE4"`
+		WithDefault                    *string `envName:"NO_ENV_VALUE" default:"default_1"`
+		WithoutEnvAndDefault           *string `envName:"NO_ENV_VALUE2"`
+		WithEnvAndDefault              *string `envName:"TEST_ENV_VALUE_1" default:"default_2"`
+		WithEnv                        *string `envName:"TEST_ENV_VALUE_2"`
+		WithValueSetAndEnvAndDefault   *string `envName:"TEST_ENV_VALUE_3" default:"default_2"`
+		WithValueSetAndOnlyEnv         *string `envName:"TEST_ENV_VALUE_4"`
+		WithValueSetAndOnlyDefault     *string `envName:"NO_ENV_VALUE3" default:"default_3"`
+		WithValueSetOnly               *string `envName:"NO_ENV_VALUE4"`
 		NoPointer                      string
 		NoPointerWithDefault           string `default:"default_4"`
-		NoPointerWithEnvNameAndDefault string `env_name:"TEST_ENV_VALUE_5" default:"default_5"`
+		NoPointerWithEnvNameAndDefault string `envName:"TEST_ENV_VALUE_5" default:"default_5"`
 		NoPointerWithValue             string
 		WithNoTags                     *string
 		UnsupportedTypeWithNoTags      complex64
@@ -89,12 +89,12 @@ func Test_SetConfigsTagsValuesForUint(t *testing.T) {
 	t.Setenv("TEST_ENV_VALUE_2", "2")
 
 	type ExampleConfig struct {
-		WithDefault                  *uint   `env_name:"NO_ENV_VALUE" default:"10"`
-		StringWithoutEnvAndDefault   *string `env_name:"NO_ENV_VALUE2"`
-		WithEnvAndDefault            *uint   `env_name:"TEST_ENV_VALUE_1" default:"20"`
-		WithEnv                      *uint   `env_name:"TEST_ENV_VALUE_2"`
-		WithValueSetAndEnvAndDefault *uint   `env_name:"TEST_ENV_VALUE_3" default:"30"`
-		WithValueSetAndOnlyEnv       *uint   `env_name:"TEST_ENV_VALUE_4"`
+		WithDefault                  *uint   `envName:"NO_ENV_VALUE" default:"10"`
+		StringWithoutEnvAndDefault   *string `envName:"NO_ENV_VALUE2"`
+		WithEnvAndDefault            *uint   `envName:"TEST_ENV_VALUE_1" default:"20"`
+		WithEnv                      *uint   `envName:"TEST_ENV_VALUE_2"`
+		WithValueSetAndEnvAndDefault *uint   `envName:"TEST_ENV_VALUE_3" default:"30"`
+		WithValueSetAndOnlyEnv       *uint   `envName:"TEST_ENV_VALUE_4"`
 		NoPointerWithDefault         uint    `default:"40"`
 	}
 
@@ -164,10 +164,10 @@ func Test_Parse_GlobalFlags(t *testing.T) {
 	defer cleanup()
 
 	type ExampleConfig struct {
-		AnyField1 *string `arg_name:"arg_1"`
-		AnyField2 *string `arg_name:"arg_2" default:"arg_2_default"`
-		AnyField3 uint    `arg_name:"arg_3" default:"3"`
-		AnyField4 uint    `arg_name:"arg_4"`
+		AnyField1 *string `argName:"arg_1"`
+		AnyField2 *string `argName:"arg_2" default:"arg_2_default"`
+		AnyField3 uint    `argName:"arg_3" default:"3"`
+		AnyField4 uint    `argName:"arg_4"`
 	}
 	g.Expect(flag.Lookup("arg_1")).Should(BeNil())
 	g.Expect(flag.Lookup("arg_2")).Should(BeNil())
@@ -200,18 +200,18 @@ func Test_DescriptionTags(t *testing.T) {
 	defer cleanup()
 
 	type ExampleConfig struct {
-		WithDescription    *uint `arg_name:"arg_name_1" description:"Usage of arg_name_1"`
-		WithOutDescription *uint `arg_name:"arg_name_2"`
+		WithDescription    *uint `argName:"argName_1" description:"Usage of argName_1"`
+		WithOutDescription *uint `argName:"argName_2"`
 	}
 
 	config := ExampleConfig{}
 
 	Parse(&config)
 
-	flagArg1 := flag.Lookup("arg_name_1")
-	g.Expect(flagArg1.Usage).Should(BeIdenticalTo("Usage of arg_name_1"))
+	flagArg1 := flag.Lookup("argName_1")
+	g.Expect(flagArg1.Usage).Should(BeIdenticalTo("Usage of argName_1"))
 
-	flagArg2 := flag.Lookup("arg_name_2")
+	flagArg2 := flag.Lookup("argName_2")
 	g.Expect(flagArg2.Usage).Should(BeEmpty())
 }
 
@@ -220,23 +220,23 @@ func Test_ArgDescriptionAndEnvTags(t *testing.T) {
 	defer cleanup()
 
 	type ExampleConfig struct {
-		WithDescriptionOnly      *uint `arg_name:"arg_name_1" description:"Usage of arg_name_1."`
-		WithDescriptionAndEnv    *uint `env_name:"env_name_2" arg_name:"arg_name_2" description:"Usage of arg_name_2."`
-		WithOutDescriptionAndEnv *uint `env_name:"env_name_3" arg_name:"arg_name_3"`
+		WithDescriptionOnly      *uint `argName:"argName_1" description:"Usage of argName_1."`
+		WithDescriptionAndEnv    *uint `envName:"envName_2" argName:"argName_2" description:"Usage of argName_2."`
+		WithOutDescriptionAndEnv *uint `envName:"envName_3" argName:"argName_3"`
 	}
 
 	config := ExampleConfig{}
 
 	Parse(&config)
 
-	flagArg1 := flag.Lookup("arg_name_1")
-	g.Expect(flagArg1.Usage).Should(BeIdenticalTo("Usage of arg_name_1."))
+	flagArg1 := flag.Lookup("argName_1")
+	g.Expect(flagArg1.Usage).Should(BeIdenticalTo("Usage of argName_1."))
 
-	flagArg2 := flag.Lookup("arg_name_2")
-	g.Expect(flagArg2.Usage).Should(BeIdenticalTo("Usage of arg_name_2. (Overrides ENV variable 'env_name_2')"))
+	flagArg2 := flag.Lookup("argName_2")
+	g.Expect(flagArg2.Usage).Should(BeIdenticalTo("Usage of argName_2. (Overrides ENV variable 'envName_2')"))
 
-	flagArg3 := flag.Lookup("arg_name_3")
-	g.Expect(flagArg3.Usage).Should(BeIdenticalTo(" (Overrides ENV variable 'env_name_3')"))
+	flagArg3 := flag.Lookup("argName_3")
+	g.Expect(flagArg3.Usage).Should(BeIdenticalTo(" (Overrides ENV variable 'envName_3')"))
 }
 
 func Test_lookupValueFromConfigsTags(t *testing.T) {
@@ -253,11 +253,11 @@ func Test_lookupValueFromConfigsTags(t *testing.T) {
 	value = lookupValueUsingConfigsTags(fieldTags)
 	g.Expect(value).Should(BeNil())
 
-	fieldTags = `env_name:"NO_ENV_VALUE"`
+	fieldTags = `envName:"NO_ENV_VALUE"`
 	value = lookupValueUsingConfigsTags(fieldTags)
 	g.Expect(value).Should(BeNil())
 
-	fieldTags = `env_name:"TEST_ENV_VALUE_1"`
+	fieldTags = `envName:"TEST_ENV_VALUE_1"`
 	value = lookupValueUsingConfigsTags(fieldTags)
 	g.Expect(*value).Should(BeIdenticalTo("env_value_1"))
 
@@ -265,11 +265,11 @@ func Test_lookupValueFromConfigsTags(t *testing.T) {
 	value = lookupValueUsingConfigsTags(fieldTags)
 	g.Expect(*value).Should(BeIdenticalTo("default_1"))
 
-	fieldTags = `env_name:"NO_ENV_VALUE" default:"default_1"`
+	fieldTags = `envName:"NO_ENV_VALUE" default:"default_1"`
 	value = lookupValueUsingConfigsTags(fieldTags)
 	g.Expect(*value).Should(BeIdenticalTo("default_1"))
 
-	fieldTags = `env_name:"TEST_ENV_VALUE_1" default:"default_1"`
+	fieldTags = `envName:"TEST_ENV_VALUE_1" default:"default_1"`
 	value = lookupValueUsingConfigsTags(fieldTags)
 	g.Expect(*value).Should(BeIdenticalTo("env_value_1"))
 }
@@ -278,35 +278,35 @@ func Test_lookupValueFromConfigsTags2(t *testing.T) {
 	g, cleanup := setup(t)
 	defer cleanup()
 
-	os.Args = []string{"command_name", "-arg_name_1", "arg_value_1"}
+	os.Args = []string{"command_name", "-argName_1", "arg_value_1"}
 
-	fieldTags := reflect.StructTag(`arg_name:"arg_name_1"`)
+	fieldTags := reflect.StructTag(`argName:"argName_1"`)
 	value := lookupValueUsingConfigsTags(fieldTags)
 	g.Expect(*value).Should(BeEquivalentTo("arg_value_1"))
 
-	os.Args = []string{"command_name", "-arg_name_1", "arg_value_1"}
+	os.Args = []string{"command_name", "-argName_1", "arg_value_1"}
 
 	//TODO archive? https://stackoverflow.com/questions/68284402/get-rid-of-flag-provided-but-not-defined-when-using-flag-package
 
-	fieldTags = `arg_name:"arg_name_2"`
+	fieldTags = `argName:"argName_2"`
 	value = lookupValueUsingConfigsTags(fieldTags)
 	g.Expect(value).Should(BeNil())
 
-	os.Args = []string{"command_name", "--arg_name_1=arg_value_1"}
+	os.Args = []string{"command_name", "--argName_1=arg_value_1"}
 
-	fieldTags = `arg_name:"arg_name_1"`
+	fieldTags = `argName:"argName_1"`
 	value = lookupValueUsingConfigsTags(fieldTags)
 	g.Expect(*value).Should(BeEquivalentTo("arg_value_1"))
 
-	os.Args = []string{"command_name", "--arg_name_1=arg_value_1"}
+	os.Args = []string{"command_name", "--argName_1=arg_value_1"}
 
-	fieldTags = `arg_name:"arg_name_2" default:"default_1"`
+	fieldTags = `argName:"argName_2" default:"default_1"`
 	value = lookupValueUsingConfigsTags(fieldTags)
 	g.Expect(*value).Should(BeEquivalentTo("default_1"))
 
-	os.Args = []string{"command_name", "--arg_name_1=arg_value_1", "-h"}
+	os.Args = []string{"command_name", "--argName_1=arg_value_1", "-h"}
 
-	fieldTags = `arg_name:"arg_name_2" default:"default_1"`
+	fieldTags = `argName:"argName_2" default:"default_1"`
 	value = lookupValueUsingConfigsTags(fieldTags)
 	g.Expect(*value).Should(BeEquivalentTo("default_1"))
 }
@@ -316,10 +316,10 @@ func Test_WithoutDefault(t *testing.T) {
 	defer cleanup()
 
 	type ExampleConfig struct {
-		Field1 *uint   `arg_name:"arg_name_1"`
-		Field2 uint    `arg_name:"arg_name_2"`
-		Field3 *string `arg_name:"arg_name_3"`
-		Field4 string  `arg_name:"arg_name_4"`
+		Field1 *uint   `argName:"argName_1"`
+		Field2 uint    `argName:"argName_2"`
+		Field3 *string `argName:"argName_3"`
+		Field4 string  `argName:"argName_4"`
 	}
 
 	config := ExampleConfig{}

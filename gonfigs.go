@@ -11,18 +11,18 @@ import (
 	"reflect"
 )
 
-// Parse parses a *struct for "gonfigs" tags like `arg_name`, `env_name`, `default` and using them to set the value
+// Parse parses a *struct for "gonfigs" tags like `argName`, `envName`, `default` and using them to set the value
 // of the corresponding fields.
 //
 // If more than one gonfigs tag are matching for a field, the priority for setting the value is:
-// `arg_name` > `env_name` > `default`
+// `argName` > `envName` > `default`
 //
 // Tags:
-//   - `arg_name` looks for a flag.Flag (command line argument) with the name corresponding to the tag value.
+//   - `argName` looks for a flag.Flag (command line argument) with the name corresponding to the tag value.
 //     Will be listed, when using '--help'
-//   - `arg_env` looks for an environment variable with the name corresponding to the tag value
+//   - `envName` looks for an environment variable with the name corresponding to the tag value
 //   - `default` will use the tags value for the field
-//   - `description` the description of the field. For documentation and/or if arg_name is although set, it will be
+//   - `description` the description of the field. For documentation and/or if argName is although set, it will be
 //     shown in the `usage` field when using `--help` in the command line.
 //
 // Struct fields will be set only, if their current values are zero (Value.IsZero()==true).
@@ -54,10 +54,10 @@ func Parse(config any) {
 			}
 		}
 
-		if argumentName, found := fieldTags.Lookup(`arg_name`); found {
+		if argumentName, found := fieldTags.Lookup(`argName`); found {
 			description, _ := fieldTags.Lookup("description")
 
-			if envName, envNameFound := fieldTags.Lookup("env_name"); envNameFound {
+			if envName, envNameFound := fieldTags.Lookup("envName"); envNameFound {
 				description = fmt.Sprintf(description+" (Overrides ENV variable '%s')", envName)
 			}
 
@@ -109,13 +109,13 @@ func createValueForField(fieldType reflect.Type, value *string) reflect.Value {
 }
 
 func lookupValueUsingConfigsTags(fieldTags reflect.StructTag) *string {
-	if argumentName, found := fieldTags.Lookup(`arg_name`); found {
+	if argumentName, found := fieldTags.Lookup(`argName`); found {
 		if argumentValue, valueFound := lookupArgument(argumentName); valueFound {
 			return &argumentValue
 		}
 	}
 
-	if envName, found := fieldTags.Lookup(`env_name`); found {
+	if envName, found := fieldTags.Lookup(`envName`); found {
 		if envValue, valueFound := os.LookupEnv(envName); valueFound {
 			return &envValue
 		}
